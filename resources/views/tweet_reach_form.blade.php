@@ -13,6 +13,16 @@
         <h1>Wonderkind Test</h1>
     </div>
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="container-fluid center-block" style="width:60%">
 
         <form id="tweet-reach-form" class="form-control form-horizontal" method="post" action="{{ route('tweet.reach.process') }}">
