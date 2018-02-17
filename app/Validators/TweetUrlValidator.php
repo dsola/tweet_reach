@@ -8,8 +8,7 @@ class TweetUrlValidator
 {
     public function validate(Request $request) {
         $request->validate([
-            //TODO: Check if the url comes from twitter
-           'tweet' => 'required|url'
+           'tweet' => 'required|url|regex:/\btwitter.com\b/u'
         ]);
     }
 }
