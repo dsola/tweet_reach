@@ -11,6 +11,5 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('tweet/reach', 'TweetController@displayTweetReach')->name('tweet.reach');
+Route::post('tweet/reach', 'TweetController@processTweet')->name('tweet.reach.process');
