@@ -15,6 +15,7 @@ class TweetController extends BaseController
 
     public function processTweet(Request $request, TweetUrlValidator $validator, CalculateTweetReachService $service) {
         $validator->validate($request);
-        return $service->execute($request->get('tweet'));
+        $reach = $service->execute($request->get('tweet'));
+        return view("tweet_reach_result", ['reach' => $reach]);
     }
 }
