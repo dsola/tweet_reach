@@ -2,31 +2,28 @@
 
 namespace App\Services;
 use App\Exceptions\TwitterClientErrorException;
-use App\Client\TwitterClientInterface;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\InvalidTweetUrlException;
 use App\Exceptions\ServerErrorException;
-use App\Entities\TwitterUser;
+use App\Repositories\TweetRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
 class CalculateTweetReachService
 {
     /**
-     * @var TwitterClientInterface
+     * @var TweetRepositoryInterface
      */
-    private $twitterClient;
+    private $repository;
 
-    public function __construct(TwitterClientInterface $twitterClient)
+    public function __construct(TweetRepositoryInterface $repository)
     {
-        $this->twitterClient = $twitterClient;
+        $this->repository = $repository;
     }
 
     public function execute(string $url): int {
         try {
             $tweetId = $this->extractTweetIdFromUrl($url);
-            $retweeterIds = $this->twitterClient->getRetweeterIdsByTweetId($tweetId);
-            $users = $this->twitterClient->getUsersById($retweeterIds);
-            return $this->countTotalFollowers($users);
+            return $this->repository->calculateNumberOfFollowers($tweetId);
         } catch (InvalidTweetUrlException $exception) {
             Log::error("The URL " . $url . " does not contain a tweet ID");
             throw new BadRequestException("The URL provided is not correct.");
@@ -34,18 +31,6 @@ class CalculateTweetReachService
             Log::error("Error on API request: " . $exception->getMessage());
             throw new ServerErrorException("Error trying to connect to the Twitter API");
         }
-    }
-
-    /**
-     * @param TwitterUser[] $users
-     * @return int
-     */
-    private function countTotalFollowers(array $users): int {
-        $total = array_reduce($users, function ($carry, TwitterUser $user) {
-            return $carry + $user->getNumberOfFollowers();
-        });
-        if (is_null($total)) return 0;
-        return $total;
     }
 
     /**
