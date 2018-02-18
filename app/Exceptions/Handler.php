@@ -36,9 +36,6 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        if ($exception instanceof DomainException) {
-            //Create error message bag
-        }
         parent::report($exception);
     }
 
