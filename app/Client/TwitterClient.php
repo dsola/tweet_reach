@@ -11,8 +11,12 @@ class TwitterClient implements TwitterClientInterface
      * @return int[]
      */
     public function getRetweeterIdsByTweetId(int $tweetId): array {
-        $retweeters = Twitter::getRters(['id' => $tweetId]);
-        return $retweeters->ids;
+        try {
+            $retweeters = Twitter::getRters(['id' => $tweetId]);
+            return $retweeters->ids;
+        } catch (\Exception $exception) {
+            throw new TwitterClientErrorException($exception->getMessage());
+        }
     }
 
     /**
@@ -20,6 +24,10 @@ class TwitterClient implements TwitterClientInterface
      * @return array
      */
     public function getUsersById(array $ids): array {
-        return Twitter::getUsersLookup(['user_id' => implode(',', $ids)]);
+        try {
+            return Twitter::getUsersLookup(['user_id' => implode(',', $ids)]);
+        } catch (\Exception $exception) {
+            throw new TwitterClientErrorException($exception->getMessage());
+        }
     }
 }

@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Services;
+use App\Client\TwitterClientErrorException;
 use App\Client\TwitterClientInterface;
 use Exceptions\InvalidTweetUrlException;
+use Exceptions\ServerErrorException;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -27,6 +29,9 @@ class CalculateTweetReachService
         } catch (InvalidTweetUrlException $exception) {
             Log::error("The URL " . $url . " does not contain a tweet ID");
             throw new BadRequestHttpException("The URL provided is not correct.");
+        } catch (TwitterClientErrorException $exception) {
+            Log::error("Error on API request: " . $exception->getMessage());
+            throw new ServerErrorException("Error trying to connect to the Twitter API");
         }
     }
 
