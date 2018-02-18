@@ -23,7 +23,7 @@ class CalculateTweetReachService
     public function execute(string $url): int {
         try {
             $tweetId = $this->extractTweetIdFromUrl($url);
-            return $this->repository->calculateNumberOfFollowers($tweetId);
+            return $this->repository->getNumberOfFollowersByTweetId($tweetId);
         } catch (InvalidTweetUrlException $exception) {
             Log::error("The URL " . $url . " does not contain a tweet ID");
             throw new BadRequestException("The URL provided is not correct.");
