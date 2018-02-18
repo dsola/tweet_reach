@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Client;
-
-use Exceptions\DomainException;
+namespace App\Exceptions;
 
 class TwitterClientErrorException extends \RuntimeException implements DomainException
 {

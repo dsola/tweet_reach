@@ -2,6 +2,8 @@
 
 namespace App\Client;
 
+use App\Entities\TwitterUser;
+
 interface TwitterClientInterface
 {
     /**
@@ -12,7 +14,7 @@ interface TwitterClientInterface
 
     /**
      * @param int[] $ids
-     * @return array
+     * @return TwitterUser[]
      */
     public function getUsersById(array $ids): array;
 }

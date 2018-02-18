@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Services;
-use App\Client\TwitterClientErrorException;
+use App\Exceptions\TwitterClientErrorException;
 use App\Client\TwitterClientInterface;
-use Exceptions\InvalidTweetUrlException;
-use Exceptions\ServerErrorException;
+use App\Exceptions\BadRequestException;
+use App\Exceptions\InvalidTweetUrlException;
+use App\Exceptions\ServerErrorException;
+use App\Entities\TwitterUser;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CalculateTweetReachService
 {
@@ -28,17 +29,23 @@ class CalculateTweetReachService
             return $this->countTotalFollowers($users);
         } catch (InvalidTweetUrlException $exception) {
             Log::error("The URL " . $url . " does not contain a tweet ID");
-            throw new BadRequestHttpException("The URL provided is not correct.");
+            throw new BadRequestException("The URL provided is not correct.");
         } catch (TwitterClientErrorException $exception) {
             Log::error("Error on API request: " . $exception->getMessage());
             throw new ServerErrorException("Error trying to connect to the Twitter API");
         }
     }
 
+    /**
+     * @param TwitterUser[] $users
+     * @return int
+     */
     private function countTotalFollowers(array $users): int {
-        return array_reduce($users, function ($carry, $user) {
-            return $carry + $user->followers_count;
+        $total = array_reduce($users, function ($carry, TwitterUser $user) {
+            return $carry + $user->getNumberOfFollowers();
         });
+        if (is_null($total)) return 0;
+        return $total;
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
 
-namespace Exceptions;
+namespace App\Exceptions;
 
 class InvalidTweetUrlException extends \RuntimeException implements DomainException {}
