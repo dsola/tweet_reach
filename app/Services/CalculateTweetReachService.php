@@ -1,11 +1,22 @@
 <?php
 
 namespace App\Services;
+use App\Client\TwitterClientInterface;
 use Exceptions\InvalidTweetUrlException;
 use Thujohn\Twitter\Facades\Twitter;
 
 class CalculateTweetReachService
 {
+    /**
+     * @var TwitterClientInterface
+     */
+    private $twitterClient;
+
+    public function __construct(TwitterClientInterface $twitterClient)
+    {
+        $this->twitterClient = $twitterClient;
+    }
+
     public function execute(string $url): int {
         try {
             $tweetId = $this->extractTweetIdFromUrl($url);

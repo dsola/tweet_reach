@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Client\TwitterClient;
+use App\Client\TwitterClientInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
     }
 
     /**
@@ -23,6 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(TwitterClientInterface::class, TwitterClient::class);
     }
 }
