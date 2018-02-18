@@ -3,7 +3,8 @@
 namespace App\Services;
 use App\Client\TwitterClientInterface;
 use Exceptions\InvalidTweetUrlException;
-use Thujohn\Twitter\Facades\Twitter;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CalculateTweetReachService
 {
@@ -20,15 +21,27 @@ class CalculateTweetReachService
     public function execute(string $url): int {
         try {
             $tweetId = $this->extractTweetIdFromUrl($url);
-            $retweeterIds = Twitter::getRters(['id' => $tweetId]);
-            $users = Twitter::getUsersLookup(['user_id' => implode(',', $retweeterIds->ids)]);
-            dd($users);
+            $retweeterIds = $this->twitterClient->getRetweeterIdsByTweetId($tweetId);
+            $users = $this->twitterClient->getUsersById($retweeterIds);
+            return $this->countTotalFollowers($users);
         } catch (InvalidTweetUrlException $exception) {
-
+            Log::error("The URL " . $url . " does not contain a tweet ID");
+            throw new BadRequestHttpException("The URL provided is not correct.");
         }
     }
 
-    public function extractTweetIdFromUrl(string $url): int
+    private function countTotalFollowers(array $users): int {
+        return array_reduce($users, function ($carry, $user) {
+            return $carry + $user->followers_count;
+        });
+    }
+
+    /**
+     * @param string $url
+     * @return int
+     * @throws InvalidTweetUrlException
+     */
+    private function extractTweetIdFromUrl(string $url): int
     {
         $uri_params = explode('/', $url);
         $id = end($uri_params);

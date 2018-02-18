@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Exceptions\DomainException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -36,6 +37,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        if ($exception instanceof DomainException) {
+            //Create error message bag
+        }
         parent::report($exception);
     }
 
