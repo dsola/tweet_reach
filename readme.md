@@ -2,7 +2,7 @@
 
 ### How to run the application
 
-This application is the implementation of an assessment defined by the company Wonderkind.
+This application is the implementation of an assessment defined by the company Wonderkind. The exercise is explained in the PDF file.
 
 You can execute a local server using the following command:
 ```bash
